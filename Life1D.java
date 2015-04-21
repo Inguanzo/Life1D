@@ -58,8 +58,9 @@ class Rule {
 		int gridWidth = (Life1D.myLength * 2) + 1;
 		int gridLength = Life1D.myLength + 1;
 		System.out.println("P1 " + gridWidth + " " + gridLength);
-		for(int row = 0; row < Life1D.myLength + 1; row++){
-			for(int column = 0; column < (Life1D.myLength * 2) + 1; column++){
+
+		for(int row = 0; row < gridWidth; row++){
+			for(int column = 0; column < gridWidth; column++){
 				if(row == 0 && column == Life1D.myLength) {
 					board[row][column] = 1;
 				} else if(row > 0){
