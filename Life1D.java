@@ -3,7 +3,7 @@ import static java.lang.System.out;
 public class Life1D {
 	private Rule rule;
 	private int stepCount;
-	public static int width;
+	public static int myLength;
 	public static void main (String [ ] args) {
 		Life1D simulation = new Life1D ( );
 		simulation.processArgs (args);
@@ -22,7 +22,7 @@ public class Life1D {
 			System.exit (1);
 		}
 		try {
-			width = Integer.parseInt(args[1]);
+			myLength = Integer.parseInt(args[1]);
 			rule = new Rule (Integer.parseInt (args[0]));
 		} catch (Exception ex) {
 			System.err.println ("The first argument must specify a rule number.");
@@ -43,21 +43,62 @@ public class Life1D {
 class Rule {
 	public Rule (int ruleNum) {
 		String binaryString = Integer.toBinaryString(ruleNum); //to binary
-		int length = binaryString.length();
-		String[] binaryStringArray = binaryString.split(""); //binary to array
-		int[] binaryIntArray = new int[Life1D.width];
-		for(int iterator = binaryIntArray.length - 1; iterator > -1; iterator--){
-			if(iterator + 1 > length) {
-				binaryIntArray[iterator] = 0;
-			}
-			else { 
-				binaryIntArray[iterator] = Integer.parseInt(binaryStringArray[iterator + 1]);
-			}
-			System.out.print(binaryIntArray[iterator]);
+		int[] binaryIntArray = new int[binaryString.length()];
+		int back = binaryString.length() - 1;
+		for(int iter = 0; iter < binaryString.length(); iter++) {
+			binaryIntArray[back] = Character.getNumericValue(binaryString.charAt(iter));
+			//System.out.print(binaryIntArray[back]);
+			back --;
 		}
-		System.out.println("");
-	}
+		//System.out.println(" -- bin string");
+		int[][] board = new int[Life1D.myLength + 1][(Life1D.myLength * 2) + 1];
+		int[] temp = new int[(Life1D.myLength * 2) + 1];
+		String current = "";
 
+		int gridWidth = (Life1D.myLength * 2) + 1;
+		int gridLength = Life1D.myLength + 1;
+		System.out.println("P1 " + gridWidth + " " + gridLength);
+		for(int row = 0; row < Life1D.myLength + 1; row++){
+			for(int column = 0; column < (Life1D.myLength * 2) + 1; column++){
+				if(row == 0 && column == Life1D.myLength) {
+					board[row][column] = 1;
+				} else if(row > 0){
+					if(column == 0) {
+						current = "0" + Integer.toString(temp[column]) + Integer.toString(temp[column + 1]);
+						if(Integer.parseInt(current, 2) > binaryIntArray.length - 1){
+							board[row][column] = 0;
+						}
+						else if(binaryIntArray[Integer.parseInt(current, 2)] == 1) {
+							board[row][column] = 1;
+						}
+					} else if(column == Life1D.myLength * 2){
+						current = Integer.toString(temp[column - 1]) + Integer.toString(temp[column]) + "0";
+						if(Integer.parseInt(current, 2) > binaryIntArray.length - 1){
+							board[row][column] = 0;
+						}
+						else if(binaryIntArray[Integer.parseInt(current, 2)] == 1) {
+							board[row][column] = 1;
+						}
+					} else {
+						current = Integer.toString(temp[column - 1]) + Integer.toString(temp[column]) + Integer.toString(temp[column + 1]);
+						if(Integer.parseInt(current, 2) > binaryIntArray.length - 1){
+							board[row][column] = 0;
+						}
+						else if(binaryIntArray[Integer.parseInt(current, 2)] == 1) {
+							board[row][column] = 1;
+						}
+					}
+				} else {
+					board[row][column] = 0;
+				}
+				System.out.print(board[row][column]);
+			}
+			for(int newColumn = 0; newColumn < (Life1D.myLength * 2) + 1; newColumn++){
+					temp[newColumn] = board[row][newColumn];
+			} 
+			System.out.println("");
+		}
+	}
 
 	
 	// Return the output that this rule prescribes for the given input.
